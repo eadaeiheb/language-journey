@@ -11,10 +11,10 @@ const SizeSelector = ({ selectedSize, sizes, onSizeSelect }: SizeSelectorProps) 
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <span className="text-sm font-['WomanFontRegular'] text-gray-900">
+        <span className="text-sm font-medium text-gray-900">
           Taille {selectedSize ? `sélectionnée: ${selectedSize}` : ''}
         </span>
-        <button className="text-xs text-[#700100] hover:underline font-['WomanFontRegular']">
+        <button className="text-xs text-[#700100] hover:underline">
           Guide des tailles
         </button>
       </div>
@@ -24,7 +24,7 @@ const SizeSelector = ({ selectedSize, sizes, onSizeSelect }: SizeSelectorProps) 
             key={size}
             onClick={() => onSizeSelect(size)}
             className={cn(
-              "py-1.5 text-sm font-['WomanFontRegular'] rounded transition-all duration-200",
+              "py-2 text-sm font-medium rounded-md transition-all duration-200",
               selectedSize === size 
                 ? 'bg-[#700100] text-white shadow-md transform scale-105' 
                 : 'bg-white border border-gray-200 text-gray-900 hover:border-[#700100] hover:bg-gray-50'
