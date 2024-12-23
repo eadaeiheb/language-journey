@@ -17,31 +17,54 @@ declare global {
 
 const LanguageSwitcher = () => {
   const [currentLang, setCurrentLang] = useState(() => 
-    localStorage.getItem('preferredLanguage') || 'en'
+    localStorage.getItem('preferredLanguage') || 'fr'
   );
 
   useEffect(() => {
+    // Set default language to French
+    if (!localStorage.getItem('preferredLanguage')) {
+      localStorage.setItem('preferredLanguage', 'fr');
+    }
+
     // Load Google Translate script
-    const script = document.createElement('script');
-    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    script.async = true;
-    document.body.appendChild(script);
+    const addScript = () => {
+      const script = document.createElement('script');
+      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+      document.body.appendChild(script);
+      return script;
+    };
 
     // Initialize Google Translate
     window.googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement({
-        pageLanguage: 'en',
+        pageLanguage: 'fr', // Set default page language to French
         includedLanguages: 'en,fr',
-        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false,
       }, 'google_translate_element');
+
+      // Force French as default if not already set
+      const iframe = document.querySelector('.goog-te-menu-frame') as HTMLIFrameElement;
+      if (iframe && currentLang === 'fr') {
+        setTimeout(() => {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (iframeDoc) {
+            const langButton = iframeDoc.querySelector(`[value="fr"]`) as HTMLElement;
+            if (langButton) langButton.click();
+          }
+        }, 1000);
+      }
     };
 
-    // Clean up
+    const script = addScript();
+
+    // Cleanup
     return () => {
       document.body.removeChild(script);
       delete window.googleTranslateElementInit;
     };
-  }, []);
+  }, [currentLang]);
 
   const handleLanguageChange = (lang: string) => {
     setCurrentLang(lang);
@@ -69,16 +92,16 @@ const LanguageSwitcher = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem 
-            onClick={() => handleLanguageChange('en')}
-            className={currentLang === 'en' ? 'bg-accent' : ''}
-          >
-            English
-          </DropdownMenuItem>
-          <DropdownMenuItem 
             onClick={() => handleLanguageChange('fr')}
             className={currentLang === 'fr' ? 'bg-accent' : ''}
           >
             Français
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            onClick={() => handleLanguageChange('en')}
+            className={currentLang === 'en' ? 'bg-accent' : ''}
+          >
+            English
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

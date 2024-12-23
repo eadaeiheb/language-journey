@@ -1,45 +1,23 @@
-import { useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { motion } from 'framer-motion';
 
-interface AnimatedTextProps {
+export interface AnimatedTextProps {
   text: string;
-  className?: string;
   delay?: number;
+  className?: string;
+  children?: React.ReactNode;
 }
 
-export const AnimatedText = ({ text, className, delay = 0 }: AnimatedTextProps) => {
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add("animate-fade-up");
-            entry.target.classList.add("opacity-100");
-          }, delay);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
-    }
-
-    return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current);
-      }
-    };
-  }, [delay]);
-
+export const AnimatedText = ({ text, delay = 0, className = '', children }: AnimatedTextProps) => {
   return (
-    <div
-      ref={elementRef}
-      className={cn("opacity-0", className)}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      className={className}
     >
       {text}
-    </div>
+      {children}
+    </motion.div>
   );
 };
