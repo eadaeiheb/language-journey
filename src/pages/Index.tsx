@@ -1,46 +1,149 @@
-import { HeroSection } from "@/components/HeroSection";
-import { LanguageCard } from "@/components/LanguageCard";
-import { FeaturesGrid } from "@/components/FeaturesGrid";
-import { AnimatedText } from "@/components/AnimatedText";
+import React, { useState, useEffect, Suspense, useTransition } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { trackVisitor } from '../utils/visitorTracking';
+import { Skeleton } from "@/components/ui/skeleton";
 
-const languages = [
-  { language: "Spanish", icon: "/placeholder.svg", learners: "2M+" },
-  { language: "French", icon: "/placeholder.svg", learners: "1.5M+" },
-  { language: "German", icon: "/placeholder.svg", learners: "1M+" },
-  { language: "Japanese", icon: "/placeholder.svg", learners: "800K+" },
-];
+// Lazy load components
+const TopNavbar = React.lazy(() => import('../components/TopNavbar'));
+const BrandNavbar = React.lazy(() => import('../components/BrandNavbar'));
+const MainNavbar = React.lazy(() => import('../components/MainNavbar'));
+const Hero = React.lazy(() => import('../components/Hero'));
+const Products = React.lazy(() => import('../components/Products'));
+const Men = React.lazy(() => import('../components/Men'));
+const BrandIntro = React.lazy(() => import('../components/BrandIntro'));
+const NewCollection = React.lazy(() => import('../components/NewCollection'));
+const BrandLocation = React.lazy(() => import('../components/BrandLocation'));
+const Footer = React.lazy(() => import('../components/Footer'));
+const LoadingScreen = React.lazy(() => import('../components/LoadingScreen'));
+const GiftCollection = React.lazy(() => import('../components/GiftCollection'));
+const WhatsAppPopup = React.lazy(() => import('../components/WhatsAppPopup'));
+const SalesPopup = React.lazy(() => import('../components/SalesPopup'));
+
+// Loading fallback component
+const LoadingFallback = () => (
+  <div className="w-full h-24 animate-pulse">
+    <Skeleton className="w-full h-full" />
+  </div>
+);
 
 const Index = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInView, setIsInView] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    trackVisitor('Accueil');
+    const handleScroll = () => {
+      startTransition(() => {
+        if (window.scrollY > 100) {
+          setIsInView(true);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen">
-      <HeroSection />
-      
-      <section className="py-20 bg-soft-gray">
-        <AnimatedText
-          text="Popular Languages"
-          className="text-3xl font-bold text-center mb-12"
-        />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4 max-w-7xl mx-auto">
-          {languages.map((lang, index) => (
-            <AnimatedText
-              key={lang.language}
-              text=""
-              delay={index * 100}
-            >
-              <LanguageCard {...lang} />
-            </AnimatedText>
-          ))}
-        </div>
-      </section>
-      
-      <section className="py-20">
-        <AnimatedText
-          text="Why Choose Us"
-          className="text-3xl font-bold text-center mb-12"
-        />
-        <FeaturesGrid />
-      </section>
+    <div className="min-h-screen relative">
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <Suspense fallback={<LoadingFallback />}>
+            <LoadingScreen onLoadingComplete={() => {
+              startTransition(() => {
+                setIsLoading(false);
+              });
+            }} />
+          </Suspense>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: 1.2,
+              ease: [0.43, 0.13, 0.23, 0.96],
+              staggerChildren: 0.1
+            }}
+          >
+            <Suspense fallback={<LoadingFallback />}>
+              <TopNavbar />
+              <BrandNavbar />
+              <div className="hidden lg:block">
+                <MainNavbar />
+              </div>
+              
+              <Hero />
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isInView ? 1 : 0 }}
+                transition={{ duration: 1.8 }}
+              >
+                <Suspense fallback={<LoadingFallback />}>
+                  <Products />
+                </Suspense>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isInView ? 1 : 0 }}
+                transition={{ duration: 2 }}
+              >
+                <Suspense fallback={<LoadingFallback />}>
+                  <NewCollection />
+                </Suspense>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isInView ? 1 : 0 }}
+                transition={{ duration: 2.6 }}
+              >
+                <Suspense fallback={<LoadingFallback />}>
+                  <GiftCollection />
+                </Suspense>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isInView ? 1 : 0 }}
+                transition={{ duration: 2.4 }}
+              >
+                <Suspense fallback={<LoadingFallback />}>
+                  <BrandIntro />
+                </Suspense>
+              </motion.div>
+
+              
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isInView ? 1 : 0 }}
+                transition={{ duration: 2.8 }}
+              >
+                <Suspense fallback={<LoadingFallback />}>
+                  <BrandLocation />
+                </Suspense>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isInView ? 1 : 0 }}
+                transition={{ duration: 3 }}
+              >
+                <Suspense fallback={<LoadingFallback />}>
+                  <Footer />
+                </Suspense>
+              </motion.div>
+
+              <Suspense fallback={null}>
+                <WhatsAppPopup />
+              </Suspense>
+            </Suspense>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
