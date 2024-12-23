@@ -17,7 +17,7 @@ declare global {
 
 const LanguageSwitcher = () => {
   const [currentLang, setCurrentLang] = useState(() => 
-    localStorage.getItem('preferredLanguage') || 'en'
+    localStorage.getItem('preferredLanguage') || 'fr'
   );
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const LanguageSwitcher = () => {
     // Initialize Google Translate
     window.googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement({
-        pageLanguage: 'en',
+        pageLanguage: 'fr',
         includedLanguages: 'en,fr',
         layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
       }, 'google_translate_element');
@@ -64,7 +64,7 @@ const LanguageSwitcher = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="text-white hover:text-red-500">
-            <Globe className="h-5 w-5" />
+            <Globe className="h-6 w-6" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
