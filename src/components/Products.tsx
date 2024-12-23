@@ -33,7 +33,7 @@ const Products = () => {
     <div className="w-full overflow-hidden bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl md:text-3xl lg:text-4xl text-center text-[#700100] font-['WomanFontBold'] mb-8">
-          New Products
+          Nouveautés
         </h1>
         <Categories />
         <div className="relative w-full" ref={emblaRef}>
@@ -54,14 +54,14 @@ const Products = () => {
               )}
             </CarouselContent>
             <CarouselPrevious
-              aria-label="Previous product"
-              className="absolute -left-2 md:-left-6 top-1/2 transform -translate-y-1/2 bg-[#700100] hover:bg-black/90 border-none h-8 w-8 md:h-10 md:w-10 rounded-full z-10"
+              aria-label="Produit précédent"
+              className="absolute -left-4 md:-left-6 top-1/2 transform -translate-y-1/2 bg-[#700100] hover:bg-black/90 border-none h-8 w-8 md:h-10 md:w-10 rounded-full z-10"
             >
               <i className="bi bi-chevron-left text-white"></i>
             </CarouselPrevious>
             <CarouselNext
-              aria-label="Next product"
-              className="absolute -right-2 md:-right-6 top-1/2 transform -translate-y-1/2 bg-[#700100] hover:bg-black/90 border-none h-8 w-8 md:h-10 md:w-10 rounded-full z-10"
+              aria-label="Produit suivant"
+              className="absolute -right-4 md:-right-6 top-1/2 transform -translate-y-1/2 bg-[#700100] hover:bg-black/90 border-none h-8 w-8 md:h-10 md:w-10 rounded-full z-10"
             >
               <i className="bi bi-chevron-right text-white"></i>
             </CarouselNext>
