@@ -21,50 +21,27 @@ const LanguageSwitcher = () => {
   );
 
   useEffect(() => {
-    // Set default language to French
-    if (!localStorage.getItem('preferredLanguage')) {
-      localStorage.setItem('preferredLanguage', 'fr');
-    }
-
     // Load Google Translate script
-    const addScript = () => {
-      const script = document.createElement('script');
-      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      script.async = true;
-      document.body.appendChild(script);
-      return script;
-    };
+    const script = document.createElement('script');
+    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    script.async = true;
+    document.body.appendChild(script);
 
     // Initialize Google Translate
     window.googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement({
-        pageLanguage: 'fr', // Set default page language to French
+        pageLanguage: 'fr',
         includedLanguages: 'en,fr',
-        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false,
+        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
       }, 'google_translate_element');
-
-      // Force French as default if not already set
-      const iframe = document.querySelector('.goog-te-menu-frame') as HTMLIFrameElement;
-      if (iframe && currentLang === 'fr') {
-        setTimeout(() => {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-          if (iframeDoc) {
-            const langButton = iframeDoc.querySelector(`[value="fr"]`) as HTMLElement;
-            if (langButton) langButton.click();
-          }
-        }, 1000);
-      }
     };
 
-    const script = addScript();
-
-    // Cleanup
+    // Clean up
     return () => {
       document.body.removeChild(script);
       delete window.googleTranslateElementInit;
     };
-  }, [currentLang]);
+  }, []);
 
   const handleLanguageChange = (lang: string) => {
     setCurrentLang(lang);
@@ -87,21 +64,21 @@ const LanguageSwitcher = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="text-white hover:text-red-500">
-            <Globe className="h-5 w-5" />
+            <Globe className="h-6 w-6" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem 
-            onClick={() => handleLanguageChange('fr')}
-            className={currentLang === 'fr' ? 'bg-accent' : ''}
-          >
-            Français
-          </DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => handleLanguageChange('en')}
             className={currentLang === 'en' ? 'bg-accent' : ''}
           >
             English
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            onClick={() => handleLanguageChange('fr')}
+            className={currentLang === 'fr' ? 'bg-accent' : ''}
+          >
+            Français
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
