@@ -8,8 +8,8 @@ const NewCollection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2">
           <div className="space-y-4 md:space-y-6 px-4 lg:px-8 py-8 md:py-15">
             <div>
-              <h2 className="text-3xl md:text-4xl font-['WomanFontBold']">New Collection</h2>
-              <p className="text-sm md:text-base mt-2 text-gray-300">Discover our latest designs and exceptional craftsmanship</p>
+              <h2 className="text-3xl md:text-4xl font-['WomanFontBold']">Nouvelle Collection</h2>
+              <p className="text-sm md:text-base mt-2 text-gray-300">Découvrez nos derniers designs et notre savoir-faire exceptionnel</p>
             </div>
 
             <div className="flex flex-col items-center space-y-4">
@@ -53,7 +53,7 @@ const NewCollection = () => {
                 variant="outline"
                 className="px-6 md:px-8 py-2 bg-transparent border-white text-white hover:bg-white hover:text-[#4A0404] transition-colors font-['WomanFontBold'] text-sm md:text-base"
               >
-                DISCOVER MORE
+                DÉCOUVRIR PLUS
               </Button>
             </div>
           </div>

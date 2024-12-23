@@ -5,9 +5,10 @@ interface AnimatedTextProps {
   text: string;
   className?: string;
   delay?: number;
+  children?: React.ReactNode;
 }
 
-export const AnimatedText = ({ text, className, delay = 0 }: AnimatedTextProps) => {
+export const AnimatedText = ({ text, className, delay = 0, children }: AnimatedTextProps) => {
   const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export const AnimatedText = ({ text, className, delay = 0 }: AnimatedTextProps) 
       className={cn("opacity-0", className)}
     >
       {text}
+      {children}
     </div>
   );
 };
