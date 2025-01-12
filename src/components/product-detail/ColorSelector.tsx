@@ -11,8 +11,18 @@ const ColorSelector = ({ selectedColor, colors, onColorSelect }: ColorSelectorPr
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <span className="text-sm font-medium text-gray-900">Couleur: {selectedColor}</span>
-        <span className="text-xs text-gray-500">6 couleurs disponibles</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-900">Couleur:</span>
+          <div 
+            className={cn(
+              "w-5 h-5 rounded-full border border-gray-200",
+              selectedColor === "Brown" && "ring-2 ring-[#700100] ring-offset-2"
+            )}
+            style={{ backgroundColor: colors[selectedColor] || "#8B4513" }}
+            title={selectedColor}
+          />
+          <span className="text-sm text-gray-600">{selectedColor}</span>
+        </div>
       </div>
       <div className="flex gap-1.5">
         {Object.entries(colors).map(([colorName, colorCode]) => (

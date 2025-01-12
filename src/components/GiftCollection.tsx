@@ -2,18 +2,18 @@ import React from "react";
 
 const GiftCollection = () => {
   const items = [
-    { src: "https://via.placeholder.com/300", label: "GIFT GUIDE", href: "#gift-guide" },
-    { src: "https://via.placeholder.com/300", label: "LUXURY GIFTS", href: "#luxury-gifts" },
-    { src: "https://via.placeholder.com/300", label: "MUST HAVE GIFTS", href: "#must-have-gifts" },
-    { src: "https://via.placeholder.com/300", label: "GIFT CARDS", href: "#gift-cards" },
-    { src: "https://via.placeholder.com/300", label: "SERVICES", href: "#services" },
+    { src: "GiftGuide.png", label: "GIFT GUIDE", href: "#gift-guide" },
+    { src: "LuxurtGifts.png", label: "LUXURY GIFTS", href: "#luxury-gifts" },
+    { src: "MustHaveGifts.png", label: "MUST HAVE GIFTS", href: "#must-have-gifts" },
+    { src: "GiftCards.png", label: "GIFT CARDS", href: "#gift-cards" },
+    { src: "Services.png", label: "SERVICES", href: "#services" },
   ];
 
   return (
     <section className="bg-[#F9FAFB] py-10 font-['WomanFontRegular']">
       <div className="container mx-auto p-5 flex flex-wrap justify-between">
-        <div className="w-full text-right mb-5">
-          <h2 className="text-[#8A2B3B] text-4xl">En savoir plus !</h2>
+        <div className="w-full text-center mb-5">
+          <h2 className="text-[#8A2B3B] text-4xl">Le monde fiori</h2>
         </div>
         {items.map((item, index) => (
           <a

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, Suspense, useTransition } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { trackVisitor } from '../utils/visitorTracking';
 import { Skeleton } from "@/components/ui/skeleton";
+import MainNavbarIndex from '@/components/MainNavbarIndex';
 
-// Lazy load components
 const TopNavbar = React.lazy(() => import('../components/TopNavbar'));
 const BrandNavbar = React.lazy(() => import('../components/BrandNavbar'));
 const MainNavbar = React.lazy(() => import('../components/MainNavbar'));
@@ -18,8 +17,8 @@ const LoadingScreen = React.lazy(() => import('../components/LoadingScreen'));
 const GiftCollection = React.lazy(() => import('../components/GiftCollection'));
 const WhatsAppPopup = React.lazy(() => import('../components/WhatsAppPopup'));
 const SalesPopup = React.lazy(() => import('../components/SalesPopup'));
+const NewsletterPopup = React.lazy(() => import('../components/NewsletterPopup'));
 
-// Loading fallback component
 const LoadingFallback = () => (
   <div className="w-full h-24 animate-pulse">
     <Skeleton className="w-full h-full" />
@@ -27,12 +26,18 @@ const LoadingFallback = () => (
 );
 
 const Index = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    // Check if this is the first visit
+    const hasVisited = sessionStorage.getItem('hasVisitedIndex');
+    return !hasVisited;
+  });
   const [isInView, setIsInView] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    trackVisitor('Accueil');
+    // Mark that user has visited the index page
+    sessionStorage.setItem('hasVisitedIndex', 'true');
+    
     const handleScroll = () => {
       startTransition(() => {
         if (window.scrollY > 100) {
@@ -70,7 +75,7 @@ const Index = () => {
               <TopNavbar />
               <BrandNavbar />
               <div className="hidden lg:block">
-                <MainNavbar />
+                <MainNavbarIndex />
               </div>
               
               <Hero />
@@ -104,18 +109,6 @@ const Index = () => {
                   <GiftCollection />
                 </Suspense>
               </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isInView ? 1 : 0 }}
-                transition={{ duration: 2.4 }}
-              >
-                <Suspense fallback={<LoadingFallback />}>
-                  <BrandIntro />
-                </Suspense>
-              </motion.div>
-
-              
 
               <motion.div
                 initial={{ opacity: 0 }}
@@ -139,6 +132,7 @@ const Index = () => {
 
               <Suspense fallback={null}>
                 <WhatsAppPopup />
+                <NewsletterPopup />
               </Suspense>
             </Suspense>
           </motion.div>

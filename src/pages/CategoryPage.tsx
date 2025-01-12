@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import TopNavbar from "../components/TopNavbar";
 import BeltsSection from "../components/productsPages/BeltsSection";
@@ -7,48 +7,52 @@ import ProductsSection from "../components/productsPages/ProductsSection";
 import BrandNavbarSection from "@/components/productsPages/BrandNavbarSection";
 import MainNavbarProduct from "@/components/productsPages/MainNavbarProduct";
 import { ArrowLeft } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import MainNavbar from "@/components/MainNavbar";
 
 const CategoryPage = () => {
-  const { category } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
 
-  // Extract the full path hierarchy
   const pathSegments = location.pathname
     .split('/')
     .filter(segment => segment !== '' && segment !== 'category');
 
-  useEffect(() => {
-    console.log("Current category path:", pathSegments);
-    // Show a toast to indicate the current category path
-    toast({
-      title: "Current Category",
-      description: `You are viewing: ${pathSegments.join(' > ')}`,
-    });
-  }, [location.pathname]);
-
-  // Example of conditional rendering based on path
-  const isOutletSection = pathSegments[0] === 'outlet';
-  const isSurMesureSection = pathSegments[0] === 'sur-mesure';
-  const isAccessoriesSection = pathSegments[0] === 'accessoires';
-
-  // Example of getting specific category details
-  const mainCategory = pathSegments[0];
-  const subCategory = pathSegments[1];
-  const productType = pathSegments[2];
+  const formatBreadcrumb = (segment: string) => {
+    // Handle special cases
+    switch (segment.toLowerCase()) {
+      case 'accessoires':
+        return 'Accessoires';
+      case 'femmes':
+        return 'Femmes';
+      case 'homme':
+        return 'Hommes';
+      case 'sacs-a-main':
+        return 'Sacs à main';
+      case 'pret-a-porter':
+        return 'Prêt à porter';
+      default:
+        // General formatting for other segments
+        return segment
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="min-h-screen bg-[#F9FAFB] flex flex-col relative">
       <TopNavbar />
-        <BrandNavbarSection />
-        
-        <div className="hidden lg:block">
-          <MainNavbarProduct />
-        </div>
-        <BeltsSection />
-        <div className="flex-grow bg-[#F9FAFB]">
+      <BrandNavbarSection />
+      <div className="hidden lg:block">
+        <MainNavbar/>
+      </div>
+      <div className="hidden lg:block">
+    <BeltsSection />
+    </div>
+      <div className="lg:hidden mt-[-12%]">
+    <BeltsSection />
+  </div>
+      <div className="flex-grow bg-[#F9FAFB]">
         <div className="container mx-auto px-4 py-4">
           <button
             onClick={() => navigate('/')}
@@ -58,22 +62,32 @@ const CategoryPage = () => {
             <ArrowLeft size={24} />
             <span>Retour à l'accueil</span>
           </button>
-          <div className="mb-6 text-sm breadcrumbs">
-            <ul className="flex flex-wrap gap-2 items-center">
-              <li>
-                <a href="/" className="text-gray-600 hover:text-black">
-                Accueil
-                </a>
-              </li>
-              {pathSegments.map((segment, index) => (
-                <React.Fragment key={index}>
-                  <li className="text-gray-400">/</li>
-                  <li className={index === pathSegments.length - 1 ? "text-primary font-medium" : "text-gray-600"}>
-                    {segment.split('-').join(' ')}
+          <div className="mb-6">
+            <nav className="flex" aria-label="Breadcrumb">
+              <ol className="inline-flex items-center space-x-1 md:space-x-3">
+                <li className="inline-flex items-center">
+                  <a href="/" className="text-gray-700 hover:text-primary">
+                    Accueil
+                  </a>
+                </li>
+                {pathSegments.map((segment, index) => (
+                  <li key={index}>
+                    <div className="flex items-center">
+                      <span className="mx-2.5 text-gray-400">/</span>
+                      <span 
+                        className={
+                          index === pathSegments.length - 1 
+                            ? "text-primary font-medium" 
+                            : "text-gray-700"
+                        }
+                      >
+                        {formatBreadcrumb(segment)}
+                      </span>
+                    </div>
                   </li>
-                </React.Fragment>
-              ))}
-            </ul>
+                ))}
+              </ol>
+            </nav>
           </div>
         </div>
         <ProductsSection />

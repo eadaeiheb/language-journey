@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -8,7 +7,7 @@ import { savePersonalization, removePersonalization, getPersonalizations } from 
 
 interface PersonalizationInputProps {
   itemId: number;
-  onUpdate: () => void;
+  onUpdate: (text: string) => void;
 }
 
 const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) => {
@@ -23,10 +22,11 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
   const [isEditing, setIsEditing] = useState(!text);
 
   const handleSave = () => {
-    if (text.trim()) {
-      savePersonalization(itemId, text.trim());
+    const trimmedText = text.trim();
+    if (trimmedText) {
+      savePersonalization(itemId, trimmedText);
       setIsEditing(false);
-      onUpdate();
+      onUpdate(trimmedText);
     }
   };
 
@@ -34,7 +34,16 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
     removePersonalization(itemId);
     setText('');
     setIsPersonalized(false);
-    onUpdate();
+    onUpdate('');
+  };
+
+  const handleCancel = () => {
+    if (!text) {
+      setIsPersonalized(false);
+      onUpdate('');
+    } else {
+      setIsEditing(false);
+    }
   };
 
   if (!isPersonalized) {
@@ -43,7 +52,10 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
         variant="outline"
         size="sm"
         className="w-full mt-2 text-sm bg-[#700100] hover:bg-[#590000] text-white border-[#700100] hover:border-[#590000] transition-all duration-300 shadow-sm hover:shadow-md"
-        onClick={() => setIsPersonalized(true)}
+        onClick={() => {
+          setIsPersonalized(true);
+          setIsEditing(true);
+        }}
       >
         + Ajouter une personnalisation
       </Button>
@@ -74,20 +86,13 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
               Confirmer
             </Button>
             <Button
-  size="sm"
-  variant="outline"
-  className="flex-1 border-[#700100] bg-white text-[#700100] hover:bg-red-500 hover:text-white transition-all duration-300"
-  onClick={() => {
-    if (!text) {
-      setIsPersonalized(false);
-    } else {
-      setIsEditing(false);
-    }
-  }}
->
-  Annuler
-</Button>
-
+              size="sm"
+              variant="outline"
+              className="flex-1 border-[#700100] bg-white text-[#700100] hover:bg-red-500 hover:text-white transition-all duration-300"
+              onClick={handleCancel}
+            >
+              Annuler
+            </Button>
           </div>
         </div>
       ) : (
@@ -102,14 +107,14 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
             >
               <Edit2 className="h-4 w-4" />
             </Button>
-            <Button
+          {/*   <Button
               size="icon"
               variant="ghost"
               className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
               onClick={handleRemove}
             >
               <X className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </div>
         </div>
       )}

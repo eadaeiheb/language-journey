@@ -1,75 +1,56 @@
-import React, { useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import TopNavbar from "../components/TopNavbar";
-import Footer from "../components/Footer";
-import ProductsSection from "../components/productsPages/ProductsSection";
-import BrandNavbarSection from "@/components/productsPages/BrandNavbarSection";
-import MainNavbarProduct from "@/components/productsPages/MainNavbarProduct";
-import { ArrowLeft } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import TopNavbar from '@/components/TopNavbar';
+import Footer from '@/components/Footer';
+import BrandNavbarSection from '@/components/productsPages/BrandNavbarSection';
+import MainNavbar from '@/components/MainNavbar';
+import WelcomePackTrio from '@/components/GiftApp/WelcomePackTrio';
+import WelcomePackDuo from '@/components/GiftApp/WelcomePackDuo';
+import { GiftBox } from './GiftBox';
+import GiftApp from '@/components/GiftApp/GiftApp';
+import WelcomePackPremium from '@/components/GiftApp/WelcomePackPremium';
+import WelcomePackPrestige from '@/components/GiftApp/WelcomePackPrestige';
+import WelcomePackMiniDuo from '@/components/GiftApp/WelcomePackMiniDuo';
 
 const GiftUniversePage = () => {
-  const { category } = useParams();
-  const navigate = useNavigate();
+  const [showGiftBox, setShowGiftBox] = useState(false);
+  const [showNewPage, setShowNewPage] = useState(false);
   const location = useLocation();
-  const { toast } = useToast();
-
-  const pathSegments = location.pathname
-    .split('/')
-    .filter(segment => segment !== '' && segment !== 'univers-cadeaux');
+  const [currentComponent, setCurrentComponent] = useState(null);
 
   useEffect(() => {
-    console.log("Current gift universe path:", pathSegments);
-    toast({
-      title: "Gift Universe Category",
-      description: `Browsing: ${pathSegments.join(' > ')}`,
-    });
-  }, [location.pathname]);
+    const routePath = location.pathname;
+    const lastSegment = routePath.substring(routePath.lastIndexOf('/') + 1);
+
+    const componentMap = {
+      packprestige: <WelcomePackPrestige onCompose={() => setShowGiftBox(true)} />,
+      packpremium: <WelcomePackPremium onCompose={() => setShowGiftBox(true)} />,
+      packtrio: <WelcomePackTrio onCompose={() => setShowGiftBox(true)} />,
+      packduo: <WelcomePackDuo onCompose={() => setShowGiftBox(true)} />,
+      packminiduo: <WelcomePackMiniDuo onCompose={() => setShowGiftBox(true)} />,
+    };
+
+    setCurrentComponent(componentMap[lastSegment] || <WelcomePackTrio onCompose={() => setShowGiftBox(true)} />);
+  }, [location]);
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="min-h-screen bg-[#f6f7f9]">
       <TopNavbar />
       <BrandNavbarSection />
-      
       <div className="hidden lg:block">
-        <MainNavbarProduct />
+        <MainNavbar />
       </div>
+      <br />
+      <div className="lg:mt-[0.5%] mt-[-15%]">
+  {showNewPage ? (
+    <GiftApp />
+  ) : showGiftBox ? (
+      <GiftBox onAnimationComplete={() => setShowNewPage(true)} />
+  ) : (
+    currentComponent
+  )}
+    </div>
 
-      <div className="flex-grow bg-[#F9FAFB]">
-        <div className="container mx-auto px-4 py-4">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors mb-6"
-            aria-label="Go back to home"
-          >
-            <ArrowLeft size={24} />
-            <span>Retour à l'accueil</span>
-          </button>
-          
-          <div className="mb-6 text-sm breadcrumbs">
-            <ul className="flex flex-wrap gap-2 items-center">
-              <li>
-                <a href="/" className="text-gray-600 hover:text-black">
-                  Accueil
-                </a>
-              </li>
-              <li className="text-gray-400">/</li>
-              <li>
-                <span className="text-gray-600">L'univers Cadeaux</span>
-              </li>
-              {pathSegments.map((segment, index) => (
-                <React.Fragment key={index}>
-                  <li className="text-gray-400">/</li>
-                  <li className={index === pathSegments.length - 1 ? "text-primary font-medium" : "text-gray-600"}>
-                    {segment.split('-').join(' ')}
-                  </li>
-                </React.Fragment>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <ProductsSection />
-      </div>
       <Footer />
     </div>
   );

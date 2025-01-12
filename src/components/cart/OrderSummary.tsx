@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Link } from 'react-router-dom';
+import { useCart } from './CartProvider';
 
 const promoCodes = {
   'WELCOME10': { discount: 10, description: 'Code de bienvenue' },
@@ -16,9 +17,6 @@ const promoCodes = {
 };
 
 interface OrderSummaryProps {
-  total: number;
-  shipping: number;
-  finalTotal: number;
   userDetails: UserDetails | null;
   cartItems: any[];
   onEditDetails?: () => void;
@@ -26,25 +24,25 @@ interface OrderSummaryProps {
 }
 
 const OrderSummary = ({ 
-  total, 
-  shipping, 
-  finalTotal: initialFinalTotal, 
   userDetails,
   cartItems,
   onEditDetails,
   onDeleteDetails
 }: OrderSummaryProps) => {
   const [discountCode, setDiscountCode] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [finalTotal, setFinalTotal] = useState(initialFinalTotal);
+  const { calculateTotal, hasNewsletterDiscount } = useCart();
+  const { subtotal, discount: newsletterDiscount, total, boxTotal } = calculateTotal();
+  
+  const shipping = subtotal > 299 ? 0 : 8;
+  const finalTotal = total + shipping;
+
+  // Check if any item has personalization
+  const hasPersonalization = cartItems.some(item => item.personalization);
 
   const handleApplyDiscount = () => {
     const promoCode = promoCodes[discountCode];
     
     if (promoCode) {
-      const discountAmount = (total * promoCode.discount) / 100;
-      setDiscount(discountAmount);
-      setFinalTotal(total + shipping - discountAmount);
       toast({
         title: "Code promo appliqué",
         description: `Réduction de ${promoCode.discount}% appliquée`,
@@ -108,14 +106,28 @@ const OrderSummary = ({
         <div className="space-y-4 mb-6">
           <div className="flex justify-between text-[#8E9196]">
             <span>Sous-total</span>
-            <span>{total.toFixed(2)} TND</span>
+            <span>{subtotal.toFixed(2)} TND</span>
           </div>
+          
+          {boxTotal > 0 && (
+            <div className="flex justify-between text-[#8E9196]">
+              <span>Box cadeau</span>
+              <span>{boxTotal.toFixed(2)} TND</span>
+            </div>
+          )}
+          
+          {hasNewsletterDiscount && newsletterDiscount > 0 && (
+            <div className="flex justify-between text-green-600">
+              <span>Réduction newsletter (-5%)</span>
+              <span>-{newsletterDiscount.toFixed(2)} TND</span>
+            </div>
+          )}
+
           <div className="flex justify-between text-[#8E9196]">
             <span>Livraison</span>
             <span>{shipping === 0 ? 'Gratuite' : `${shipping.toFixed(2)} TND`}</span>
           </div>
           
-          {/* Discount Code Section */}
           <div className="space-y-2 pt-2 border-t border-gray-100">
             <div className="flex gap-2">
               <Input
@@ -131,12 +143,6 @@ const OrderSummary = ({
                 Appliquer
               </Button>
             </div>
-            {discount > 0 && (
-              <div className="flex justify-between text-[#8E9196]">
-                <span>Réduction</span>
-                <span>-{discount.toFixed(2)} TND</span>
-              </div>
-            )}
           </div>
 
           <div className="border-t border-gray-100 pt-4">
@@ -152,14 +158,15 @@ const OrderSummary = ({
           enabled={!!userDetails}
           cartItems={cartItems}
           userDetails={userDetails}
-          total={total}
+          total={subtotal}
           shipping={shipping}
           finalTotal={finalTotal}
+          hasPersonalization={hasPersonalization}
         />
 
         <div className="mt-6 space-y-2 text-sm text-[#8E9196]">
           <p className="flex items-center gap-2 hover:text-[#1A1F2C] transition-colors">
-            • Livraison gratuite à partir de 500 TND
+            • Livraison gratuite à partir de 299 TND
           </p>
           <p className="flex items-center gap-2 hover:text-[#1A1F2C] transition-colors">
             • Retours gratuits sous 14 jours
